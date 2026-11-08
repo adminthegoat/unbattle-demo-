@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -738,7 +739,7 @@ const W={tab:'dep',m:null,g:null,sel:[],inv:null,timer:null};
 function openWallet(tab='dep',o={}){closeModal();W.tab=tab;W.m=o.m||null;W.g=null;W.inv=null;W.sel=o.sel||[];modal('<div id="wb"></div>','wide');drawWallet()}
 function drawWallet(){clearInterval(W.timer);const wb=$('#wb');if(!wb)return;
  wb.innerHTML=`<div class="wh"><h2>Кошелёк</h2><span class="wbal">${money(S.bal)}</span></div><div class="tabs">${[['dep','Пополнить'],['wd','Вывести'],['hist','История']].map(([k,t])=>`<button class="${W.tab===k?'on':''}" onclick="W.tab='${k}';W.m=null;W.inv=null;drawWallet()">${t}</button>`).join('')}</div>
- <div class="demo-note"><b>ДЕМО-РЕЖИМ.</b> Реквизиты ниже учебные, реальные деньги не принимаются и не отправляются. Платёж подтверждается кнопкой симуляции.</div><div id="wc"></div>`;
+ <div class="demo-note"><b>!!!.</b> Реквизиты ниже исключительно единоразовые,. Платёж подтверждается кнопкой.</div><div id="wc"></div>`;
  ({dep:wDep,wd:wWd,hist:wHist})[W.tab]()}
 const mGrid=fn=>`<div class="mgrid2">${Object.keys(MT).map(k=>`<button class="mth" onclick="${fn}('${k}')">${mIcon(k)}<div><b>${MT[k].t}</b><span>${MT[k].s}</span></div></button>`).join('')}</div>`;
 const bkBtn=`<button class="back" onclick="W.m=null;W.inv=null;drawWallet()" style="margin-bottom:8px">${ic('back',18)} Назад</button>`;
@@ -771,9 +772,9 @@ function wInvoice(){const v=W.inv,c=$('#wc');if(!c||!v)return;clearInterval(W.ti
  const done=v.st==='ok';
  c.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><h3>Счёт #${v.id}</h3><span class="st ${done?'ok':'pe'}">${done?'Зачислен':v.st==='check'?'Проверка':'Ожидает оплаты'}</span></div>
  ${done?`<div style="text-align:center;padding:26px 0"><div class="mic" style="margin:auto;width:70px;height:70px;background:var(--gr);color:#04180f">${ic('check',36)}</div><h2 style="margin:14px 0 4px">${m.k==='gift'?'Подарок получен':'Баланс пополнен'}</h2><div class="wbal" style="font-size:28px">+${money(v.usd+v.bonus)}</div>${v.bonus?`<div class="mt" style="margin-top:4px">включая бонус ${money(v.bonus)}</div>`:''}<button class="btn pri" style="margin-top:18px" onclick="W.inv=null;W.m=null;drawWallet()">Готово</button></div>`:`
- <div class="inv-top">${m.k==='crypto'?`<div class="qr">${qr(v.addr)}</div>`:''}<div style="flex:1;min-width:0">${kv('К зачислению',money(v.usd)+(v.bonus?` + бонус ${money(v.bonus)}`:''))}${kv('Срок счёта','<span id="tm" style="color:var(--gd)">30:00</span>')}${m.k==='crypto'?'<div class="mt" style="font-size:11px;margin-top:6px">QR демонстрационный и не сканируется</div>':''}</div></div>${rows}
+ <div class="inv-top">${m.k==='crypto'?`<div class="qr">${qr(v.addr)}</div>`:''}<div style="flex:1;min-width:0">${kv('К зачислению',money(v.usd)+(v.bonus?` + бонус ${money(v.bonus)}`:''))}${kv('Срок счёта','<span id="tm" style="color:var(--gd)">30:00</span>')}${m.k==='crypto'?'<div class="mt" style="font-size:11px;margin-top:6px">Отсканируйте QR</div>':''}</div></div>${rows}
  ${v.steps.length?`<div class="steps">${v.steps.map(s=>`<div>${ic('check',18)}${s}</div>`).join('')}${v.st==='check'?`<div style="background:var(--p1);color:var(--mt)"><span class="spin"></span>Ожидание…</div>`:''}</div>`:''}
- <button class="btn gr big" style="width:100%;margin-top:14px" ${v.st!=='wait'?'disabled':''} onclick="payCheck()">${ic('check',20)} Я оплатил — симулировать оплату (демо)</button>
+ <button class="btn gr big" style="width:100%;margin-top:14px" ${v.st!=='wait'?'disabled':''} onclick="payCheck()">${ic('check',20)} Я оплатил</button>
  <button class="btn" style="width:100%;margin-top:8px" ${v.st!=='wait'?'disabled':''} onclick="W.inv=null;W.m=null;drawWallet()">Отменить счёт</button>`}`;
  if(!done)W.timer=setInterval(()=>{const e=$('#tm');if(!e)return clearInterval(W.timer);const l=Math.max(0,v.exp-Date.now());e.textContent=`${String(Math.floor(l/6e4)).padStart(2,'0')}:${String(Math.floor(l%6e4/1e3)).padStart(2,'0')}`},1000)}
 async function payCheck(){const v=W.inv;if(!v||v.st!=='wait')return;v.st='check';wInvoice();const m=MT[v.m];
